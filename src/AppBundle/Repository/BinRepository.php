@@ -20,6 +20,7 @@ class BinRepository extends \Doctrine\ORM\EntityRepository
          $qb = $this->createQueryBuilder('b')
                     ->select('b')
                     ->innerJoin('b.check', 'c')
+                    ->innerJoin('b.product', 'p')
                     ->where('c.bar = :bar')
                     ->andWhere('b.product = :product')
                     ->andWhere('b.created >= :start_date')
@@ -28,7 +29,7 @@ class BinRepository extends \Doctrine\ORM\EntityRepository
                     ->setParameter('product', $product)
                     ->setParameter('start_date', $start_date)
                     ->setParameter('end_date', $end_date)
-                    ->addSelect('SUM(c.total) as total')
+                    ->addSelect('SUM(p.cost) as total')
                     ->addSelect('COUNT(c.id) as sales')
                     ->groupBy('b.product');
 
@@ -43,9 +44,10 @@ class BinRepository extends \Doctrine\ORM\EntityRepository
         $qb = $this->createQueryBuilder('b')
                    ->select('b')
                    ->innerJoin('b.check', 'c')
+                   ->innerJoin('b.product', 'p')
                    ->where('c.bar = :bar')
                    ->setParameter('bar', $bar)
-                   ->addSelect('SUM(c.total) as total')
+                   ->addSelect('SUM(p.cost) as total')
                    ->addSelect('COUNT(c.id) as sales')
                    ->addSelect('SUM(b.is_free) as free');
         if ($start_date && $end_date) {
