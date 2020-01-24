@@ -126,6 +126,18 @@ class Stock
     }
 
     /**
+     * @param int $count
+     *
+     * @return $this
+     */
+    public function increase(int $count)
+    {
+        $this->setCount($this->getCount() + $count);
+
+        return $this;
+    }
+
+    /**
      * Set count
      *
      * @param integer $count

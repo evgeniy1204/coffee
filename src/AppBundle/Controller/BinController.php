@@ -200,10 +200,10 @@ class BinController extends Controller
         $em = $this->getDoctrine()->getManager();
         $filter = (null != $request->request->get('filter')) ? $request->request->get('filter') : "";
         $date = new \DateTime();
-        $start_date = "";
-        $end_date = "";
+        $start_date = new \DateTime();
+        $end_date = new \DateTime();
         $user = $this->getUser();
-        $checks = $em->getRepository('AppBundle:Check')->findAllChecks($start_date, $end_date, $user);
+        $checks = $em->getRepository('AppBundle:Check')->findAllChecks($start_date->format('Y-m-d'), $end_date->format('Y-m-d'), $user);
 
         if ($filter) {
             if ($request->request->get('button') == 'month') {

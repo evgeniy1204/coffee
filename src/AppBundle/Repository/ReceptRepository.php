@@ -2,6 +2,8 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Product;
+
 /**
  * ReceptRepository
  *

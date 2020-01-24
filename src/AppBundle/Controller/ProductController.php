@@ -74,12 +74,13 @@ class ProductController extends Controller
      * @Route("/{id}", name="product_show")
      * @Method("GET")
      */
-    public function showAction(Product $product, $id)
+    public function showAction(Product $product)
     {
         $recepts = array();
         $em = $this->getDoctrine()->getManager();
-        $recept = $em->getRepository('AppBundle:Recept')->getProducts($id);
-        $sales = $em->getRepository('AppBundle:Bin')->findByProduct($id);
+        $recept = $em->getRepository('AppBundle:Recept')->getProducts($product->getId());
+        $sales = $em->getRepository('AppBundle:Bin')->getCountBinByProduct($product);
+
         foreach ($recept as $key => $value) {
             $recepts[$value['name']]['recept'][] = array(
                             "count"      => $value[0]->getCount(),

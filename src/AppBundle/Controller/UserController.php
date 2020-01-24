@@ -73,9 +73,9 @@ class UserController extends Controller
         $deleteForm = $this->createDeleteForm($user);
         $filter = (null != $request->request->get('filter')) ? $request->request->get('filter') : "";
         $date = new \DateTime();
-        $start_date = $date->format('Y-m-d');
-        $end_date = "";
-        $checks = $em->getRepository('AppBundle:Check')->findAllChecks($start_date, $end_date, $user);
+        $start_date = new \DateTime();
+        $end_date = new \DateTime();
+        $checks = $em->getRepository('AppBundle:Check')->findAllChecks($start_date->format('Y-m-d'), $end_date->format('Y-m-d'), $user);
 
         if ($filter) {
             if ($request->request->get('button') == 'month') {

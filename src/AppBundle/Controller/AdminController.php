@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Service\CheckService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,10 +21,9 @@ class AdminController extends Controller
     public function indexAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $bins = $em->getRepository('AppBundle:Bin')->findAll();
+        $bins = $em->getRepository('AppBundle:Bin')->getCountAllBin();
         $bars = $em->getRepository('AppBundle:Bar')->findAll();
-        $users = $em->getRepository('AppBundle:User')->findAll();
-        $user = $this->getUser();
+        $users = $em->getRepository('AppBundle:User')->findBy(['enabled' => 1]);
         $date = new \DateTime();
         $date->format('Y-m-d');
         $session = $request->getSession();
@@ -33,8 +33,7 @@ class AdminController extends Controller
                                                                 'bars'    => $bars
                                                                 ));
         }
-        //$earning = ($this->getUser()->hasRole('ROLE_BARISTA')) ? $em->getRepository('AppBundle:Check')->getEarningBar($this->getUser()->getBar(), $date) : $em->getRepository('AppBundle:Check')->getAllEarningBars();
-        
+
         $earning = $em->getRepository('AppBundle:Check')->getAllEarningBars();
         $earning = ($earning) ? $earning[0]['total'] : 0;
         
@@ -78,14 +77,20 @@ class AdminController extends Controller
         $em = $this->getDoctrine()->getManager();
         $check = $em->getRepository('AppBundle:Check')->find($request->request->get('check'));
         $user =  $em->getRepository('AppBundle:User')->find($request->request->get('user'));
-        $em->remove($check);
-        $em->flush();
+
+        if ($check) {
+            $this->get(CheckService::class)->updateStockFromDeletedCheck($check);
+
+            $em->remove($check);
+            $em->flush();
+        }
+
 
         $date = new \DateTime();
-        $start_date = "";
-        $end_date = "";
+        $start_date = new \DateTime();
+        $end_date = new \DateTime();
 
-        $checks = $em->getRepository('AppBundle:Check')->findAllChecks($start_date, $end_date, $user);
+        $checks = $em->getRepository('AppBundle:Check')->findAllChecks($start_date->format('Y-m-d'), $end_date->format('Y-m-d'), $user);
         
         return $this->render('AppBundle:Admin:checksFilter.html.twig', array(
                                                                 'checks'    => $checks,

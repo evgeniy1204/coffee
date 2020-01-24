@@ -2,6 +2,8 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Product;
+
 /**
  * BinRepository
  *
@@ -56,5 +58,31 @@ class BinRepository extends \Doctrine\ORM\EntityRepository
                    ->orderBy('sales', 'DESC');
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCountAllBin()
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->select('COUNT(b) as countBin');
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param Product $product
+     *
+     * @return mixed
+     */
+    public function getCountBinByProduct(Product $product)
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->select('COUNT(b) as countBin')
+            ->andWhere('b.product = :product')
+            ->setParameter('product', $product);
+
+        return $qb->getQuery()->getSingleScalarResult();
     }
 }

@@ -19,24 +19,10 @@ class CheckRepository extends \Doctrine\ORM\EntityRepository
                     ->select('p')
                     ->orderBy('p.created', 'DESC')
                     ->where('p.user = :user')
-                    ->setParameter('user', $user);
-                    
-        if ($start_date && !$end_date) {
-        		 $qb->andWhere('p.created >= :start_date')
-        		    ->setParameter('start_date', $start_date);
-        }
-
-        if (!$start_date && $end_date) {
-        		 $qb->andWhere('p.created <= :end_date')
-        		    ->setParameter('end_date', $end_date);
-        }
-
-        if ($start_date && $end_date) {
-        		 $qb->andWhere('p.created >= :start_date')
-        		 	->andWhere('p.created <= :end_date')
-        		    ->setParameter('start_date', $start_date)
-        		    ->setParameter('end_date', $end_date);
-        }
+                    ->setParameter('user', $user)
+                    ->andWhere('DATE(p.created) >= :start_date AND DATE(p.created) <= :end_date')
+                    ->setParameter('start_date', $start_date)
+                    ->setParameter('end_date', $end_date);
 
         return $qb->getQuery()->getResult();
     }

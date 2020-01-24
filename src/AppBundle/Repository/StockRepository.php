@@ -2,6 +2,8 @@
 
 namespace AppBundle\Repository;
 
+use AppBundle\Entity\Stock;
+
 /**
  * StockRepository
  *
@@ -20,8 +22,20 @@ class StockRepository extends \Doctrine\ORM\EntityRepository
                     ->where('p.ingredient = :ingredient')
                     ->andWhere('p.bar = :bar')
                     ->setParameter('ingredient', $ingredient)
-                    ->setParameter('bar', $bar);
+                    ->setParameter('bar', $bar)
+                    ->setMaxResults(1);
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()->getSingleResult();
+    }
+
+    /**
+     * @param Stock $stock
+     *
+     * @return void
+     */
+    public function updateStock(Stock $stock)
+    {
+        $this->_em->persist($stock);
+        $this->_em->flush();
     }
 }
